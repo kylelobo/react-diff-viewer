@@ -66,6 +66,8 @@ export interface ReactDiffViewerProps {
 	leftTitle?: string | JSX.Element;
 	// Title for left column
 	rightTitle?: string | JSX.Element;
+	// Show Expand lines option
+	showSkippedLineIndicator: boolean;
 }
 
 export interface ReactDiffViewerState {
@@ -92,6 +94,7 @@ class DiffViewer extends React.Component<
 		showDiffOnly: true,
 		useDarkTheme: false,
 		linesOffset: 0,
+		showSkippedLineIndicator: true
 	};
 
 	public static propTypes = {
@@ -110,6 +113,7 @@ class DiffViewer extends React.Component<
 		leftTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 		rightTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
 		linesOffset: PropTypes.number,
+		showSkippedLineIndicator: PropTypes.bool
 	};
 
 	public constructor(props: ReactDiffViewerProps) {
@@ -303,7 +307,7 @@ class DiffViewer extends React.Component<
 		index: number,
 	): JSX.Element => {
 		return (
-			<tr key={index} className={this.styles.line}>
+			(left.value !== right.value) && <tr key={index} className={this.styles.line}>
 				{this.renderLine(
 					left.lineNumber,
 					left.type,
@@ -475,6 +479,7 @@ class DiffViewer extends React.Component<
 			disableWordDiff,
 			compareMethod,
 			linesOffset,
+			showSkippedLineIndicator
 		} = this.props;
 		const { lineInformation, diffLines } = computeLineInformation(
 			oldValue,
@@ -504,7 +509,7 @@ class DiffViewer extends React.Component<
 						!this.state.expandedBlocks.includes(diffBlockStart)
 					) {
 						skippedLines.push(i + 1);
-						if (i === lineInformation.length - 1 && skippedLines.length > 1) {
+						if (showSkippedLineIndicator && i === lineInformation.length - 1 && skippedLines.length > 1) {
 							return this.renderSkippedLineIndicator(
 								skippedLines.length,
 								diffBlockStart,
@@ -520,7 +525,7 @@ class DiffViewer extends React.Component<
 					? this.renderSplitView(line, i)
 					: this.renderInlineView(line, i);
 
-				if (currentPosition === extraLines && skippedLines.length > 0) {
+				if (showSkippedLineIndicator && currentPosition === extraLines && skippedLines.length > 0) {
 					const { length } = skippedLines;
 					skippedLines = [];
 					return (

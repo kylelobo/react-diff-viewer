@@ -95,6 +95,7 @@ class Example extends React.Component<{}, ExampleState> {
             useDarkTheme
             leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
             rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
+            showSkippedLineIndicator={false}
           />
         </div>
         <footer>
